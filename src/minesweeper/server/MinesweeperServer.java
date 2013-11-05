@@ -28,7 +28,7 @@ public class MinesweeperServer {
      * @throws IOException if the main server socket is broken
      *                     (IOExceptions from individual clients do *not* terminate serve())
      */
-    public void serve() throws IOException {
+    /*public void serve() throws IOException {
         while (true) {
             // block until a client connects
             Socket socket = serverSocket.accept();
@@ -42,7 +42,49 @@ public class MinesweeperServer {
                 socket.close();
             }
         }
-    }
+    }*/
+    
+    public void serve() throws IOException 
+    { 
+    	 //ServerSocket serverSocket = new ServerSocket(PORT); 
+    	 
+    	 while (true) 
+    	 { 
+    	 // block until a client connects 
+    	 final Socket socket = serverSocket.accept(); 
+    	 
+    	 // start a new thread to handle the connection 
+    	 Thread thread = new Thread(new Runnable() 
+    	 { 
+    		 public void run() 
+    		 { 
+    	 // the client socket object is now owned by this thread, 
+    	 // and mustn't be touched again in the main thread 
+    			 try 
+    			 {
+    	                handleConnection(socket);
+    	         } 
+    			 catch (IOException e) 
+    			 {
+    	                e.printStackTrace(); // but don't terminate serve()
+    	         } 
+    			 finally 
+    			 {
+    	                try 
+    	                {
+							socket.close();
+						} 
+    	                catch (IOException e) 
+						{
+							e.printStackTrace();
+						}
+    	         }
+    		 } 
+    	 }); 
+    	 thread.start();  
+    	 } 
+    	 } 
+
 
     /**
      * Handle a single client connection. Returns when client disconnects.
@@ -81,7 +123,8 @@ public class MinesweeperServer {
             return null;
         }
         String[] tokens = input.split(" ");
-        if (tokens[0].equals("look")) {
+        if (tokens[0].equals("look")) 
+        {
             // 'look' request
             // TODO Question 5
         } else if (tokens[0].equals("help")) {
