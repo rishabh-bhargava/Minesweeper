@@ -14,14 +14,26 @@ import java.util.Queue;
 
 import minesweeper.board.Board;
 
+/**
+ * The following class uses different threads for different players playing the same game of Minesweeper
+ * However, all of the different threads share the same Board object.
+ * This means that if all the methods on board that look into it or modify its parameters are synchronized (which is the case),
+ * two threads would never operate on it together.
+ * Thus even though concurrency is reduced, the data type is threadsafe.
+ * @author Rishabh
+ *
+ */
+
 public class MinesweeperServer {
     private final ServerSocket serverSocket;
     /**
      * True if the server should _not_ disconnect a client after a BOOM message.
      */
     private final boolean debug;
+    //single instance of number of players
     private static int countPlayers = 0;
-    private static Board board;
+    //single instance of Board
+    private static Board board; 
 
     /**
      * Make a MinesweeperServer that listens for connections on port.
@@ -39,23 +51,7 @@ public class MinesweeperServer {
      * 
      * @throws IOException if the main server socket is broken
      *                     (IOExceptions from individual clients do *not* terminate serve())
-     */
-    /*public void serve() throws IOException {
-        while (true) {
-            // block until a client connects
-            Socket socket = serverSocket.accept();
-
-            // handle the client
-            try {
-                handleConnection(socket);
-            } catch (IOException e) {
-                e.printStackTrace(); // but don't terminate serve()
-            } finally {
-                socket.close();
-            }
-        }
-    }*/
-    
+     */    
     public void serve() throws IOException 
     { 
     	 //ServerSocket serverSocket = new ServerSocket(PORT); 
@@ -70,8 +66,8 @@ public class MinesweeperServer {
     	 { 
     		 public void run() 
     		 { 
-    	 // the client socket object is now owned by this thread, 
-    	 // and mustn't be touched again in the main thread 
+    			 // the client socket object is now owned by this thread, 
+    			 // and mustn't be touched again in the main thread 
     			 try 
     			 {
     	                handleConnection(socket);
@@ -105,7 +101,8 @@ public class MinesweeperServer {
      * @param socket socket where the client is connected
      * @throws IOException if connection has an error or terminates unexpectedly
      */
-    private void handleConnection(Socket socket) throws IOException {
+    private void handleConnection(Socket socket) throws IOException 
+    {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         countPlayers++;
@@ -135,10 +132,12 @@ public class MinesweeperServer {
      * @param input message from client
      * @return message to client
      */
-    private String handleRequest(String input) {
+    private String handleRequest(String input) 
+    {
         String regex = "(look)|(dig -?\\d+ -?\\d+)|(flag -?\\d+ -?\\d+)|"
                 + "(deflag -?\\d+ -?\\d+)|(help)|(bye)";
-        if ( ! input.matches(regex)) {
+        if ( ! input.matches(regex)) 
+        {
             // invalid input
             return null;
         }
@@ -146,31 +145,36 @@ public class MinesweeperServer {
         if (tokens[0].equals("look")) 
         {
             // 'look' request
-            // TODO Question 5
-        	return this.board.look();
-        } else if (tokens[0].equals("help")) {
+        	return board.look();
+        } 
+        else if (tokens[0].equals("help")) 
+        {
             // 'help' request
-            // TODO Question 5
-        	return "MESSAGE     :== ( LOOK | DIG | FLAG | DEFLAG | HELP_REQ | BYE ) NEWLINE";
-        } else if (tokens[0].equals("bye")) {
+            return "MESSAGE     :== ( LOOK | DIG | FLAG | DEFLAG | HELP_REQ | BYE ) NEWLINE";
+        } 
+        else if (tokens[0].equals("bye")) 
+        {
             // 'bye' request
-            // TODO Question 5
         	return "bye";
-        } else {
+        } 
+        else 
+        {
             int x = Integer.parseInt(tokens[1]);
             int y = Integer.parseInt(tokens[2]);
-            if (tokens[0].equals("dig")) {
+            if (tokens[0].equals("dig")) 
+            {
                 // 'dig x y' request
-                // TODO Question 5
-            	return this.board.dig(y, x);
-            } else if (tokens[0].equals("flag")) {
+            	return board.dig(y, x);
+            } 
+            else if (tokens[0].equals("flag")) 
+            {
                 // 'flag x y' request
-                // TODO Question 5
-            	return this.board.flag(y, x);
-            } else if (tokens[0].equals("deflag")) {
+                return board.flag(y, x);
+            } 
+            else if (tokens[0].equals("deflag")) 
+            {
                 // 'deflag x y' request
-                // TODO Question 5
-            	return this.board.deflag(y, x);
+            	return board.deflag(y, x);
             }
         }
         // Should never get here--make sure to return in each of the valid cases above.
@@ -278,8 +282,6 @@ public class MinesweeperServer {
      */
     public static void runMinesweeperServer(boolean debug, File file, Integer size, int port) throws IOException 
     {
-        
-        // TODO: Continue your implementation here.
     	if(size != null)
     	{
     		board = new Board(size);

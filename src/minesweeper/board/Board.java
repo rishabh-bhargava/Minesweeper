@@ -64,6 +64,7 @@ public class Board
 				squares[i][j] = new Square(tokens[j].equals("1"));
 			}
 		}
+		reader.close();
 		this.checkRep();
 	}
 	
@@ -149,6 +150,16 @@ public class Board
 		return this.look();
 	}
 	
+	/**
+	 * Digs the square whose indices are provided. Returns a BOOM message if bomb is dug, otherwise returns a LOOK message
+	 * If bomb dug up, then bomb is to be removed and board updated
+	 * If square without bomb is dug up, 2 cases arise-
+	 * 1) square with 0 neighbouring bombs- in which case surrounding squares are also dug up
+	 * 2) square with > 0 neighbouring bombs- in which case representation of square becomes the value of surrounding bombs
+	 * @param row of Board
+	 * @param column of Board
+	 * @return String with either 'BOOM!' message or a LOOK message
+	 */
 	public synchronized String dig(int row, int column)
 	{
 		//Return look
@@ -183,25 +194,36 @@ public class Board
 		return this.look();
 	}
 	
-	private void expandOutwards(int row, int column)
+	/**
+	 * Dig helper method which expands a square outwards in the case that there are no bombs surrounding a given square
+	 * Consequently, the surrounding squares are dug
+	 * @param row of square with no surrounding bombs
+	 * @param column of square with no surrounding bombs
+	 */
+	private synchronized void expandOutwards(int row, int column)
 	{
 		for(int i = -1; i <2; i++)
 		{
 			for(int j = -1; j < 2 ; j++)
 			{
+				//if valid square and untouched 
 				if(this.isValid(row + i, column+j) && this.squares[row+i][column + j].getCurrentValue() == '-')
 				{
 					int currentValue = this.getCurrentValueSquareAfterDig((row+i), (column +j));
+					//recursively call expandOutwards if another square with 0 surrounding bombs is found
 					if(currentValue == 0)
 					{
 						this.squares[row+i][column + j].setCurrentValue(' ');
 						this.expandOutwards(row+ i, column + j);
 					}
+					
+					
 					else
 						this.squares[row+i][column + j].setCurrentValue(Character.forDigit(currentValue, 10));
 				}
 			}
 		}
+		this.checkRep();
 	}
 	
 	/**
