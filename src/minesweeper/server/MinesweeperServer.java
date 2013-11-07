@@ -120,7 +120,12 @@ public class MinesweeperServer {
                 	countPlayers--;
                 }
             }
-        } finally {
+        } 
+        catch(java.net.SocketException e)
+        {
+        	out.println();
+        }
+        finally {
             out.close();
             in.close();
         }

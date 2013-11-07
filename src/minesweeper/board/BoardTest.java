@@ -45,7 +45,7 @@ public class BoardTest
 	public void seeBombPatternFromFile()throws IOException
 	{
 		Board b = new Board(new File("C:\\Users\\Rishabh\\Documents\\MIT\\Fall Semester\\6.005\\Eclipse\\Workspace\\ps3\\src\\autograder\\resources\\board_file_5"));
-		/*for(int i = 0; i < b.size; i++)
+		for(int i = 0; i < b.size; i++)
 		{
 			for(int j = 0; j < b.size; j++)
 			{
@@ -55,7 +55,7 @@ public class BoardTest
 					System.out.print(0 + " ");
 			}
 			System.out.println();
-		}*/
+		}
 		System.out.println(b.dig(1, 3));
 		System.out.println(b.dig(1, 4));
 		System.out.println(b.look());
@@ -79,7 +79,6 @@ public class BoardTest
 		System.out.println(b.flag(0, 0));
 		System.out.println(b.deflag(0, 0));
 		System.out.println(b.dig(0, 3));
-		//System.out.println(b.dig(0, 0));
 		System.out.println(b.look());
 	}
 	
