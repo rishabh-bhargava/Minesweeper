@@ -1,8 +1,18 @@
 package minesweeper.server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Queue;
+
+import minesweeper.board.Board;
 
 public class MinesweeperServer {
     private final ServerSocket serverSocket;
@@ -10,6 +20,8 @@ public class MinesweeperServer {
      * True if the server should _not_ disconnect a client after a BOOM message.
      */
     private final boolean debug;
+    
+    private static Board board;
 
     /**
      * Make a MinesweeperServer that listens for connections on port.
@@ -66,7 +78,7 @@ public class MinesweeperServer {
     	         } 
     			 catch (IOException e) 
     			 {
-    	                e.printStackTrace(); // but don't terminate serve()
+    	                e.printStackTrace(); 
     	         } 
     			 finally 
     			 {
@@ -95,12 +107,17 @@ public class MinesweeperServer {
     private void handleConnection(Socket socket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println("Welcome to Minesweeper.  people are playing including you. Type 'help' for help.");
 
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 String output = handleRequest(line);
                 if (output != null) {
                     out.println(output);
+                }
+                if(output.equals("bye") || (output.equals("BOOM!") && !debug))
+                {
+                	socket.close();
                 }
             }
         } finally {
@@ -127,24 +144,30 @@ public class MinesweeperServer {
         {
             // 'look' request
             // TODO Question 5
+        	return this.board.look();
         } else if (tokens[0].equals("help")) {
             // 'help' request
             // TODO Question 5
+        	return "MESSAGE     :== ( LOOK | DIG | FLAG | DEFLAG | HELP_REQ | BYE ) NEWLINE";
         } else if (tokens[0].equals("bye")) {
             // 'bye' request
             // TODO Question 5
+        	return "bye";
         } else {
             int x = Integer.parseInt(tokens[1]);
             int y = Integer.parseInt(tokens[2]);
             if (tokens[0].equals("dig")) {
                 // 'dig x y' request
                 // TODO Question 5
+            	return this.board.dig(x, y);
             } else if (tokens[0].equals("flag")) {
                 // 'flag x y' request
                 // TODO Question 5
+            	return this.board.flag(x, y);
             } else if (tokens[0].equals("deflag")) {
                 // 'deflag x y' request
                 // TODO Question 5
+            	return this.board.deflag(x, y);
             }
         }
         // Should never get here--make sure to return in each of the valid cases above.
@@ -250,10 +273,19 @@ public class MinesweeperServer {
      *             according to the input file format defined in the JavaDoc for main().
      * @param port The network port on which the server should listen.
      */
-    public static void runMinesweeperServer(boolean debug, File file, Integer size, int port) throws IOException {
+    public static void runMinesweeperServer(boolean debug, File file, Integer size, int port) throws IOException 
+    {
         
         // TODO: Continue your implementation here.
-        
+    	if(size != null)
+    	{
+    		board = new Board(size);
+    	}
+    	if(file != null)
+    	{
+    		board = new Board(file);
+    	}
+    	
         MinesweeperServer server = new MinesweeperServer(port, debug);
         server.serve();
     }
