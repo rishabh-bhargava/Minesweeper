@@ -20,7 +20,7 @@ public class MinesweeperServer {
      * True if the server should _not_ disconnect a client after a BOOM message.
      */
     private final boolean debug;
-    
+    private static int countPlayers = 0;
     private static Board board;
 
     /**
@@ -85,6 +85,7 @@ public class MinesweeperServer {
     	                try 
     	                {
 							socket.close();
+							countPlayers--;
 						} 
     	                catch (IOException e) 
 						{
@@ -107,7 +108,8 @@ public class MinesweeperServer {
     private void handleConnection(Socket socket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println("Welcome to Minesweeper.  people are playing including you. Type 'help' for help.");
+        countPlayers++;
+        out.println("Welcome to Minesweeper. " + countPlayers + "people are playing including you. Type 'help' for help.");
 
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -118,6 +120,7 @@ public class MinesweeperServer {
                 if(output.equals("bye") || (output.equals("BOOM!") && !debug))
                 {
                 	socket.close();
+                	countPlayers--;
                 }
             }
         } finally {

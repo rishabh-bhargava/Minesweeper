@@ -58,4 +58,24 @@ public class BoardTest
 		}
 	}
 	
+	@Test
+	public void FileTest()throws IOException
+	{
+		Board b = new Board(new File("C:\\Users\\Rishabh\\Documents\\MIT\\Fall Semester\\6.005\\Eclipse\\Workspace\\ps3\\src\\autograder\\resources\\board_test.txt"));
+		for(int i = 0; i < b.size; i++)
+		{
+			for(int j = 0; j < b.size; j++)
+			{
+				if(b.squares[i][j].isBomb())
+					System.out.print(1 + " ");
+				else
+					System.out.print(0 + " ");
+			}
+			System.out.println();
+		}
+		System.out.println(b.flag(0, 0));
+		System.out.println(b.deflag(0, 0));
+		System.out.println(b.dig(0, 1));
+	}
+	
 }

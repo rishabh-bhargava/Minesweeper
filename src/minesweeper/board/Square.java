@@ -33,4 +33,11 @@ public class Square
 	{
 		this.isBomb = false;
 	}
+	
+	public boolean isDug()
+	{
+		if(this.currentValue == ' ' || this.currentValue == '-' || this.currentValue == 'F')
+			return false;
+		return true;
+	}
 }

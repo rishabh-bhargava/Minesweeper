@@ -127,11 +127,11 @@ public class Board
 	 * Flags the location on the board whose row, column are given if valid indices, and untouched
 	 * @param row of board 
 	 * @param column of board
-	 * @return String representation of Board
+	 * @return String representation of Board irrespective of condition on indices
 	 */
 	public synchronized String flag(int row, int column)
 	{
-		if(!(row < 0 || column < 0 || row >= this.size || column >=this.size) && squares[row][column].getCurrentValue() == '-')
+		if(this.isValid(row, column) && squares[row][column].getCurrentValue() == '-')
 			squares[row][column].setCurrentValue('F');
 		return this.look();
 	}
@@ -144,47 +144,92 @@ public class Board
 	 */
 	public synchronized String deflag(int row, int column)
 	{
-		if(!(row < 0 || column < 0 || row >= this.size || column >=this.size) && squares[row][column].getCurrentValue() == 'F')
+		if(this.isValid(row, column) && squares[row][column].getCurrentValue() == 'F')
 			squares[row][column].setCurrentValue('-');
 		return this.look();
 	}
 	
 	public synchronized String dig(int row, int column)
 	{
+		//Return look
 		if(row < 0 || column < 0 || row >= this.size || column >=this.size || squares[row][column].getCurrentValue() != '-')
 			return this.look();
 		
+		//Case that you dig a bomb
 		if(squares[row][column].isBomb())
 		{
 			squares[row][column].bombWasDug();
+			modifyDugNeighbourSquaresAfterBomb(row, column);
 			squares[row][column].setCurrentValue((char)this.getCurrentValueSquareAfterDig(row, column));
 			return "BOOM!" + '\n';
 		}
+		
+		//Case that you don't dig a bomb
 		int neighboursWithBombs = this.getCurrentValueSquareAfterDig(row, column);
+		
+		//Bombs around = 0
 		if(neighboursWithBombs == 0)
 		{
 			squares[row][column].setCurrentValue(' ');
 			
 		}
+		
+		//Bombs around > 0
 		else
 		{
-			squares[row][column].setCurrentValue((char)neighboursWithBombs);
+			squares[row][column].setCurrentValue(Character.forDigit(neighboursWithBombs, 10));
 		}
 		return this.look();
+	}
+	
+	/**
+	 * This is a private method which modifies the 8 squares around the bomb after the bomb blows up.
+	 * @param row
+	 * @param column
+	 */
+	private synchronized void modifyDugNeighbourSquaresAfterBomb(int row, int column)
+	{
+		for(int i = -1; i<2; i++)
+		{
+			for(int j= -1; j< 2; j++)
+			{
+				if(i==0 && j==0)
+					continue;
+				if(this.isValid(row + i, column+j) && this.squares[row+i][column + j].isDug())
+				{
+					char currentValue = this.squares[row+i][column+j].getCurrentValue();
+					this.squares[row+i][column+j].setCurrentValue((char)((int)currentValue - 1));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Checks whether input row and column values are valid for the given Board
+	 * @param row 
+	 * @param column
+	 * @return
+	 */
+	private synchronized boolean isValid(int row, int column)
+	{
+		if(row < 0 || column < 0 || row >= this.size ||  column >= this.size)
+			return false;
+		return true;
 	}
 	
 	private synchronized int getCurrentValueSquareAfterDig(int row, int column)
 	{
 		int count = 0;
-		count += findBombInLocation(row-1, column-1);
-		count += findBombInLocation(row, column-1);
-		count += findBombInLocation(row+1, column-1);
-		count += findBombInLocation(row-1, column);
-		count += findBombInLocation(row+1, column);
-		count += findBombInLocation(row-1, column+1);
-		count += findBombInLocation(row, column+1);
-		count += findBombInLocation(row+1, column+1);
-		
+		for(int i = -1; i< 2; i++)
+		{
+			for(int j= -1; j< 2; j++)
+			{
+				if(i ==0 && j==0)
+					continue;
+				if(this.isValid(row+i, column+j))
+					count += findBombInLocation(row+i, column+j);
+			}
+		}		
 		return count;
 	}
 	
@@ -196,7 +241,7 @@ public class Board
 	 */
 	private synchronized int findBombInLocation(int r, int c)
 	{
-		if(r < 0 || c < 0 || r >= this.size || c>=this.size)
+		if(!this.isValid(r, c))
 		{
 			return 0;
 		}
