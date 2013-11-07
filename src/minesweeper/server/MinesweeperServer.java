@@ -162,15 +162,15 @@ public class MinesweeperServer {
             if (tokens[0].equals("dig")) {
                 // 'dig x y' request
                 // TODO Question 5
-            	return this.board.dig(x, y);
+            	return this.board.dig(y, x);
             } else if (tokens[0].equals("flag")) {
                 // 'flag x y' request
                 // TODO Question 5
-            	return this.board.flag(x, y);
+            	return this.board.flag(y, x);
             } else if (tokens[0].equals("deflag")) {
                 // 'deflag x y' request
                 // TODO Question 5
-            	return this.board.deflag(x, y);
+            	return this.board.deflag(y, x);
             }
         }
         // Should never get here--make sure to return in each of the valid cases above.

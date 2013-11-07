@@ -160,7 +160,8 @@ public class Board
 		{
 			squares[row][column].bombWasDug();
 			modifyDugNeighbourSquaresAfterBomb(row, column);
-			squares[row][column].setCurrentValue((char)this.getCurrentValueSquareAfterDig(row, column));
+			char c = this.getCurrentValueSquareAfterDig(row, column) > 0 ? Character.forDigit(this.getCurrentValueSquareAfterDig(row, column), 10) : ' ';
+			squares[row][column].setCurrentValue(c);
 			return "BOOM!" + '\n';
 		}
 		
@@ -171,7 +172,7 @@ public class Board
 		if(neighboursWithBombs == 0)
 		{
 			squares[row][column].setCurrentValue(' ');
-			
+			this.expandOutwards(row, column);
 		}
 		
 		//Bombs around > 0
@@ -180,6 +181,27 @@ public class Board
 			squares[row][column].setCurrentValue(Character.forDigit(neighboursWithBombs, 10));
 		}
 		return this.look();
+	}
+	
+	private void expandOutwards(int row, int column)
+	{
+		for(int i = -1; i <2; i++)
+		{
+			for(int j = -1; j < 2 ; j++)
+			{
+				if(this.isValid(row + i, column+j) && this.squares[row+i][column + j].getCurrentValue() == '-')
+				{
+					int currentValue = this.getCurrentValueSquareAfterDig((row+i), (column +j));
+					if(currentValue == 0)
+					{
+						this.squares[row+i][column + j].setCurrentValue(' ');
+						this.expandOutwards(row+ i, column + j);
+					}
+					else
+						this.squares[row+i][column + j].setCurrentValue(Character.forDigit(currentValue, 10));
+				}
+			}
+		}
 	}
 	
 	/**
@@ -197,8 +219,14 @@ public class Board
 					continue;
 				if(this.isValid(row + i, column+j) && this.squares[row+i][column + j].isDug())
 				{
-					char currentValue = this.squares[row+i][column+j].getCurrentValue();
-					this.squares[row+i][column+j].setCurrentValue((char)((int)currentValue - 1));
+					int currentValue = Character.getNumericValue(this.squares[row+i][column+j].getCurrentValue()) - 1;
+					if(currentValue == 0)
+					{
+						this.squares[row+i][column+j].setCurrentValue(' ');
+						this.expandOutwards(row+i, column+j);
+					}
+					else
+						this.squares[row+i][column+j].setCurrentValue(Character.forDigit(currentValue,10));
 				}
 			}
 		}
@@ -217,6 +245,12 @@ public class Board
 		return true;
 	}
 	
+	/**
+	 * Find the number of bombs surrounding current square
+	 * @param row of current square
+	 * @param column of currenr square
+	 * @return Integer number of bombs surrounding the square
+	 */
 	private synchronized int getCurrentValueSquareAfterDig(int row, int column)
 	{
 		int count = 0;
