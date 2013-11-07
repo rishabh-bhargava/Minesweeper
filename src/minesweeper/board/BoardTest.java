@@ -9,6 +9,15 @@ import org.junit.Test;
 
 public class BoardTest 
 {
+	/**
+	 * Tests have been written for
+	 * 1) Boards created from files
+	 * 2) Boards created randomly
+	 * 
+	 * Tests have been created for-
+	 * 1) All public methods. They might not be in the standard assertEquals() form, but have been checked thoroughly
+	 * 2) The private methods are being tested through the public methods
+	 */
 	@Test
 	public void testLookNewBoard()
 	{
@@ -16,6 +25,7 @@ public class BoardTest
 		assertEquals(b.look(), "- - - - -"+'\n'+"- - - - -"+'\n'+"- - - - -"+'\n'+"- - - - -"+'\n'+"- - - - -"+'\n');
 	}
 	
+	//This test is to test whether the random board producing constructor works or not
 	@Test
 	public void testRandomBombPattern()
 	{
@@ -33,6 +43,7 @@ public class BoardTest
 		}
 	}
 	
+	//Reading from a file and producing a look
 	@Test
 	public void lookFromFile()throws IOException
 	{
@@ -41,26 +52,38 @@ public class BoardTest
 		assertEquals(b.look(), "- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n');
 	}
 	
+	//Reading from a file, testing the bomb positions and doing a few digs to test.
+	//It was much easier to test print statements
+	//The file was the autograder file
 	@Test
 	public void seeBombPatternFromFile()throws IOException
 	{
 		Board b = new Board(new File("C:\\Users\\Rishabh\\Documents\\MIT\\Fall Semester\\6.005\\Eclipse\\Workspace\\ps3\\src\\autograder\\resources\\board_file_5"));
+		String test = "";
 		for(int i = 0; i < b.size; i++)
 		{
 			for(int j = 0; j < b.size; j++)
 			{
 				if(b.squares[i][j].isBomb())
-					System.out.print(1 + " ");
+					test += "1 ";
 				else
-					System.out.print(0 + " ");
+					test += "0 ";
 			}
-			System.out.println();
+			test += '\n';
 		}
+		assertEquals(true, test.equals("0 0 0 0 0 0 0 " + '\n'+ "0 0 0 0 1 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"1 0 0 0 0 0 0 " + '\n'));
 		System.out.println(b.dig(1, 3));
 		System.out.println(b.dig(1, 4));
 		System.out.println(b.look());
 	}
 	
+	//Tests for flag, deflag, dig and look on the following new file
+	/*
+	 * 1 0 0 0 
+	 * 0 1 0 0 
+	 * 0 0 0 0 
+	 * 1 0 0 1 
+	 */
 	@Test
 	public void FileTest()throws IOException
 	{
