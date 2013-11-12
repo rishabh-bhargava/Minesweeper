@@ -114,7 +114,7 @@ public class MinesweeperServer {
                 if (output != null) {
                     out.println(output);
                 }
-                if(output.equals("bye") || (output.equals("BOOM!") && !debug))
+                if(output.equals("bye") || (output.equals("BOOM!" + '\n') && !debug))
                 {
                 	socket.close();
                 	countPlayers--;
