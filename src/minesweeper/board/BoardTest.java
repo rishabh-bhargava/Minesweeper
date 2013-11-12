@@ -47,7 +47,7 @@ public class BoardTest
 	@Test
 	public void lookFromFile()throws IOException
 	{
-		Board b = new Board(new File("C:\\Users\\Rishabh\\Documents\\MIT\\Fall Semester\\6.005\\Eclipse\\Workspace\\ps3\\src\\autograder\\resources\\board_file_5"));
+		Board b = new Board(new File("src\\autograder\\resources\\board_file_5"));
 		System.out.println(b.look());
 		assertEquals(b.look(), "- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n');
 	}
@@ -58,7 +58,7 @@ public class BoardTest
 	@Test
 	public void seeBombPatternFromFile()throws IOException
 	{
-		Board b = new Board(new File("C:\\Users\\Rishabh\\Documents\\MIT\\Fall Semester\\6.005\\Eclipse\\Workspace\\ps3\\src\\autograder\\resources\\board_file_5"));
+		Board b = new Board(new File("src\\autograder\\resources\\board_file_5"));
 		String test = "";
 		for(int i = 0; i < b.size; i++)
 		{
@@ -87,7 +87,7 @@ public class BoardTest
 	@Test
 	public void FileTest()throws IOException
 	{
-		Board b = new Board(new File("C:\\Users\\Rishabh\\Documents\\MIT\\Fall Semester\\6.005\\Eclipse\\Workspace\\ps3\\src\\autograder\\resources\\board_test.txt"));
+		Board b = new Board(new File("src\\autograder\\resources\\board_test.txt"));
 		for(int i = 0; i < b.size; i++)
 		{
 			for(int j = 0; j < b.size; j++)

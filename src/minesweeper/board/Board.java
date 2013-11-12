@@ -2,14 +2,13 @@ package minesweeper.board;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
 /**
  * Rep invariant- 	size > 0
- * 					board is always square 
+ * 					Board is always square (n x n)
  * @author Rishabh
  *
  */

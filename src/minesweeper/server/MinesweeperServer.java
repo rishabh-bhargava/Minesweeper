@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import minesweeper.board.Board;
 
@@ -19,6 +20,8 @@ import minesweeper.board.Board;
  * However, all of the different threads share the same Board object.
  * This means that if all the methods on board that look into it or modify its parameters are synchronized (which is the case),
  * two threads would never operate on it together.
+ * Also, a static AtomicInteger() for counting number of players has been included which removes concurrency issues related to
+ * modifying (incrementing and decrementing)
  * Thus even though concurrency is reduced, the data type is threadsafe.
  * @author Rishabh
  *
@@ -31,7 +34,7 @@ public class MinesweeperServer {
      */
     private final boolean debug;
     //single instance of number of players
-    private static int countPlayers = 0;
+    private static AtomicInteger countPlayers = new AtomicInteger();
     //single instance of Board
     private static Board board; 
 
@@ -81,7 +84,7 @@ public class MinesweeperServer {
     	                try 
     	                {
 							socket.close();
-							countPlayers--;
+							countPlayers.decrementAndGet();
 						} 
     	                catch (IOException e) 
 						{
@@ -105,8 +108,8 @@ public class MinesweeperServer {
     {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        countPlayers++;
-        out.println("Welcome to Minesweeper. " + countPlayers + "people are playing including you. Type 'help' for help.");
+        countPlayers.incrementAndGet();
+        out.println("Welcome to Minesweeper. " + countPlayers.intValue() + "people are playing including you. Type 'help' for help.");
 
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -117,7 +120,7 @@ public class MinesweeperServer {
                 if(output.equals("bye") || (output.equals("BOOM!" + '\n') && !debug))
                 {
                 	socket.close();
-                	countPlayers--;
+                	countPlayers.decrementAndGet();
                 }
             }
         } 
