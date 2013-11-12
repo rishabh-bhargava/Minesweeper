@@ -287,13 +287,13 @@ public class MinesweeperServer {
      */
     public static void runMinesweeperServer(boolean debug, File file, Integer size, int port) throws IOException 
     {
-    	if(size != null)
-    	{
-    		board = new Board(size);
-    	}
     	if(file != null)
     	{
     		board = new Board(file);
+    	}
+    	else
+    	{
+    		board = new Board(size);
     	}
     	
         MinesweeperServer server = new MinesweeperServer(port, debug);
