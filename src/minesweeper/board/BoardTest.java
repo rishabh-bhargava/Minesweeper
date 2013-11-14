@@ -26,6 +26,7 @@ public class BoardTest
 	}
 	
 	//This test is to test whether the random board producing constructor works or not
+	//This test cannot be used however with assert statements because the squares with bombs are produced randomly
 	@Test
 	public void testRandomBombPattern()
 	{
