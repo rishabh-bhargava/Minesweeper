@@ -44,18 +44,27 @@ public class BoardTest
 		}
 	}
 	
-	//Reading from a file and producing a look
+	//Reading from a file and testing a look
 	@Test
 	public void lookFromFile()throws IOException
 	{
 		Board b = new Board(new File("src\\autograder\\resources\\board_file_5"));
-		System.out.println(b.look());
 		assertEquals(b.look(), "- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n'+"- - - - - - -"+'\n');
 	}
 	
 	//Reading from a file, testing the bomb positions and doing a few digs to test.
-	//It was much easier to test print statements
-	//The file was the autograder file
+	//A dig in a non bomb and bomb location was done
+	//Also a dig on a square previously dug was done.
+	//A look is performed after digging a bomb to make sure necessary changes have happened
+	//The file was the autograder file, which is shown below-
+	/* 0 0 0 0 0 0 0
+	 * 0 0 0 0 1 0 0
+	 * 0 0 0 0 0 0 0
+	 * 0 0 0 0 0 0 0
+	 * 0 0 0 0 0 0 0
+	 * 0 0 0 0 0 0 0
+	 * 1 0 0 0 0 0 0 
+	 */
 	@Test
 	public void seeBombPatternFromFile()throws IOException
 	{
@@ -73,12 +82,33 @@ public class BoardTest
 			test += '\n';
 		}
 		assertEquals(true, test.equals("0 0 0 0 0 0 0 " + '\n'+ "0 0 0 0 1 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"0 0 0 0 0 0 0 " + '\n'+"1 0 0 0 0 0 0 " + '\n'));
-		System.out.println(b.dig(1, 3));
-		System.out.println(b.dig(1, 4));
-		System.out.println(b.look());
+		test = "";
+		test +="- - - - - - -" + '\n';
+		test +="- - - 1 - - -" + '\n';
+		test +="- - - - - - -" + '\n';
+		test +="- - - - - - -" + '\n';
+		test +="- - - - - - -" + '\n';
+		test +="- - - - - - -" + '\n';
+		test +="- - - - - - -" + '\n';
+		assertEquals(true, test.equals(b.dig(1, 3)));
+		//Dig repeated on already dug location
+		assertEquals(true, test.equals(b.dig(1, 3)));
+		test = "BOOM!" + '\n';
+		assertEquals(true, test.equals(b.dig(1, 4)));
+		
+		test = "";
+		test +="             " + '\n';
+		test +="             " + '\n';
+		test +="             " + '\n';
+		test +="             " + '\n';
+		test +="             " + '\n';
+		test +="1 1          " + '\n';
+		test +="- 1          " + '\n';
+		assertEquals(true, test.equals(b.look()));
 	}
 	
-	//Tests for flag, deflag, dig and look on the following new file
+	//Tests for flag and deflag on the following new file
+	//Deflag was tested on flagged and unflagged square
 	/*
 	 * 1 0 0 0 
 	 * 0 1 0 0 
@@ -89,21 +119,36 @@ public class BoardTest
 	public void FileTest()throws IOException
 	{
 		Board b = new Board(new File("src\\autograder\\resources\\board_test.txt"));
+		String test = "";
 		for(int i = 0; i < b.size; i++)
 		{
 			for(int j = 0; j < b.size; j++)
 			{
 				if(b.squares[i][j].isBomb())
-					System.out.print(1 + " ");
+					test += "1 ";
 				else
-					System.out.print(0 + " ");
+					test +="0 ";
 			}
-			System.out.println();
+			test += '\n';
 		}
-		System.out.println(b.flag(0, 0));
-		System.out.println(b.deflag(0, 0));
-		System.out.println(b.dig(0, 3));
-		System.out.println(b.look());
+		assertEquals(true, test.equals("1 0 0 0 "+ '\n'+ "0 1 0 0 "+ '\n' + "0 0 0 0 "+ '\n' + "1 0 0 1 "+ '\n'));
+		
+		test = "";
+		test +="F - - -" + '\n';
+		test +="- - - -" + '\n';
+		test +="- - - -" + '\n';
+		test +="- - - -" + '\n';
+		assertEquals(true, test.equals(b.flag(0, 0)));
+		
+		test = "";
+		test +="- - - -" + '\n';
+		test +="- - - -" + '\n';
+		test +="- - - -" + '\n';
+		test +="- - - -" + '\n';
+		assertEquals(true, test.equals(b.deflag(0, 0)));
+		
+		//Deflag done on a square not dug up, with no result
+		assertEquals(true, test.equals(b.deflag(0, 0)));
 	}
 	
 }
