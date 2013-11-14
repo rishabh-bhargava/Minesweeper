@@ -15,7 +15,7 @@ public class BoardTest
 	 * 2) Boards created randomly
 	 * 
 	 * Tests have been created for-
-	 * 1) All public methods. They might not be in the standard assertEquals() form, but have been checked thoroughly
+	 * 1) All public methods and constructors.
 	 * 2) The private methods are being tested through the public methods
 	 */
 	@Test
